@@ -8,6 +8,7 @@ ROOT.gInterpreter.AddIncludePath(os.path.dirname(__file__) + "/cc/")
 ROOT.gInterpreter.Declare('#include "functions.h"')
 ROOT.gInterpreter.Declare('#include "classes/DelphesClasses.h"')
 
+print(ROOT.GetThreadPoolSize())
 
 def analyze(files, fOut):
 
