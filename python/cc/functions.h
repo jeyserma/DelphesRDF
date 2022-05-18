@@ -3,7 +3,7 @@
 
 
 
-
+#include "TClonesArray.h"
 
 float mt_2(float pt1, float phi1, float pt2, float phi2) {
     return std::sqrt(2*pt1*pt2*(1-std::cos(phi1-phi2)));
@@ -59,6 +59,18 @@ ROOT::VecOps::RVec<double> computeEnergy(ROOT::VecOps::RVec<double> pt, ROOT::Ve
         ret.push_back(v.E());
     }
   
+    return ret;
+}
+
+// function to compute Energy (.E) from TClonesArray
+ROOT::VecOps::RVec<double> convertEnergy(TClonesArray pt) {
+
+    ROOT::VecOps::RVec<double> ret;
+    
+    for(int i=0; i<pt.GetEntries(); i++) {
+        Tower *tt = (Tower*)pt.At(i);
+        ret.push_back(tt->E);
+    }
     return ret;
 }
 

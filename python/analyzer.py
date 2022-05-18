@@ -5,8 +5,9 @@ import functions
 ROOT.gSystem.Load("libDelphes")
 
 ROOT.gInterpreter.AddIncludePath(os.path.dirname(__file__) + "/cc/")
-ROOT.gInterpreter.Declare('#include "functions.h"')
 ROOT.gInterpreter.Declare('#include "classes/DelphesClasses.h"')
+ROOT.gInterpreter.Declare('#include "functions.h"')
+
 
 print(ROOT.GetThreadPoolSize())
 
@@ -47,7 +48,12 @@ def analyze(files, fOut):
     
     rdf = rdf.Define("recoil", "recoil(240, pfcand_mom4)")
     rdf = rdf.Define("energy_vis", "sumScalar(pf_energy)")
-    
+
+    #rdf = rdf.Define("EFlowNeutralHadron_E", "EFlowNeutralHadron.E") # results in template error (?)
+    rdf = rdf.Define("EFlowNeutralHadron_E", "convertEnergy(EFlowNeutralHadron)")
+    rdf = rdf.Define("EFlowNeutralHadron_ET", "EFlowNeutralHadron.ET")
+    rdf = rdf.Define("EFlowNeutralHadron_Ehad", "EFlowNeutralHadron.Ehad") # same as E for neutral hadrons
+
     
     ## gen
     rdf = rdf.Define("genjet_pt", "GenJet.PT")
@@ -76,7 +82,10 @@ def analyze(files, fOut):
     
     h_genjet_pt = rdf.Histo1D(("genjet_pt", "", 100, 0, 100), "genjet_pt")
     h_gendijet_m = rdf.Histo1D(("gendijet_m", "", 200, 0, 200), "gendijet_m")
-
+    
+    graphs.append(rdf.Histo1D(("EFlowNeutralHadron_E", "", 50, 0, 50), "EFlowNeutralHadron_E"))
+    graphs.append(rdf.Histo1D(("EFlowNeutralHadron_ET", "", 50, 0, 50), "EFlowNeutralHadron_ET"))
+    graphs.append(rdf.Histo1D(("EFlowNeutralHadron_Ehad", "", 50, 0, 50), "EFlowNeutralHadron_Ehad"))
 
     graphs.append(h_jet_pt)
     graphs.append(h_dijet_m)
@@ -119,9 +128,9 @@ if __name__ == "__main__":
  
  
     ## vvbb, IDEA + CMS calorimeter
-    files = functions.findFiles("/eos/experiment/fcc/ee/generation/DelphesStandalone/DetectorVariation_v0/vvbb_CaloCMS/")
-    analyze(files, "output/vvbb_CaloCMS.root")
+    #files = functions.findFiles("/eos/experiment/fcc/ee/generation/DelphesStandalone/DetectorVariation_v0/vvbb_CaloCMS/")
+    #analyze(files, "output/vvbb_CaloCMS.root")
     
     ## vvbb, IDEA + Tracker CLD
-    files = functions.findFiles("/eos/experiment/fcc/ee/generation/DelphesStandalone/DetectorVariation_v0/vvbb_TrkCLD/")
-    analyze(files, "output/vvbb_TrkCLD.root")
+    #files = functions.findFiles("/eos/experiment/fcc/ee/generation/DelphesStandalone/DetectorVariation_v0/vvbb_TrkCLD/")
+    #analyze(files, "output/vvbb_TrkCLD.root")
